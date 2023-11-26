@@ -8,3 +8,9 @@ linters:
     - ineffassign
     - staticcheck
     - unused
+    # custom
+    - gocyclo
+
+linters-settings:
+  gocyclo:
+    min-complexity: 10
