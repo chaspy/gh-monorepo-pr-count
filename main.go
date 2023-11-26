@@ -5,7 +5,9 @@ import (
 	"io/fs"
 	"log"
 	"path/filepath"
+	"strconv"
 	"strings"
+	"sync"
 
 	"os"
 
@@ -64,31 +66,76 @@ func isPathValid(info fs.FileInfo, path string) bool {
 	return true
 }
 
+func printPRCount(baseBranch string, targetRepo string, path string, searchQuery string) error {
+	// TODO: handle with json format
+	// NOTE: If GH_REPO env is set, then it is used as targetRepo in preference to the current repository
+	// ref: https://cli.github.com/manual/gh_help_environment
+	prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery, "--limit", "100")
+
+	if err != nil {
+		return fmt.Errorf("could not get PR list: %w", err)
+	}
+
+	result := strings.Split(prList.String(), "\n")
+	num := len(result) - 1
+	fmt.Printf("%s,%d\n", path, num)
+
+	return nil
+}
+
 func walk(baseBranch string, targetRepo string, searchQuery string) error {
+	var wg sync.WaitGroup
+	errCh := make(chan error, 1)
+
+	var maxConcurrentcy int
+	if os.Getenv("MAX_CONCURRENTCY") == "" {
+		maxConcurrentcy = 50
+	} else {
+		maxConcurrentcy, _ = strconv.Atoi(os.Getenv("MAX_CONCURRENTCY"))
+	}
+	sem := make(chan struct{}, maxConcurrentcy)
+
 	err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
 		if isPathValid(info, path) {
 			// Skip subdirectories
 			if strings.Count(path, string(os.PathSeparator)) > 0 {
 				return filepath.SkipDir
 			}
-			// TODO: handle with json format
-			// NOTE: If GH_REPO env is set, then it is used as targetRepo in preference to the current repository
-			// ref: https://cli.github.com/manual/gh_help_environment
-			prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery, "--limit", "100")
 
-			if err != nil {
-				return fmt.Errorf("could not get PR list: %w", err)
-			}
+			sem <- struct{}{} // Acquire semaphore
 
-			result := strings.Split(prList.String(), "\n")
-			num := len(result) - 1
-			fmt.Printf("%s,%d\n", path, num)
+			wg.Add(1)
+			go func(wg *sync.WaitGroup) {
+				defer func() {
+					<-sem // Release semaphore
+					wg.Done()
+				}()
+
+				err := printPRCount(baseBranch, targetRepo, path, searchQuery)
+				if err != nil {
+					errCh <- fmt.Errorf("could not print PR count: %w", err)
+				}
+			}(&wg)
+
 		}
 		return nil
 	})
+
 	if err != nil {
 		return fmt.Errorf("could not walk: %w", err)
 	}
+
+	go func() {
+		wg.Wait()
+		close(errCh)
+	}()
+
+	for err := range errCh {
+		if err != nil {
+			return fmt.Errorf("could not print PR count: %w", err)
+		}
+	}
+
 	return nil
 }
 
