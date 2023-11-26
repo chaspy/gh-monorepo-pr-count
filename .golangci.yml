@@ -13,6 +13,7 @@ linters:
     - gochecknoglobals
     - errorlint
     - wrapcheck
+    - forbidigo
 
 linters-settings:
   gocyclo:
@@ -20,3 +21,7 @@ linters-settings:
 
   errorlint:
     errorf: true
+
+  forbidigo:
+    forbid:
+      - log.Fatal
