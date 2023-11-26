@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/fs"
 	"log"
 	"path/filepath"
 	"strings"
@@ -50,7 +51,10 @@ func getTargetRepo() (string, error) {
 	return targetRepo, nil
 }
 
-func isPathValid(path string) bool {
+func isPathValid(info fs.FileInfo, path string) bool {
+	if !info.IsDir() {
+		return false
+	}
 	if path == "." {
 		return false
 	}
@@ -62,7 +66,7 @@ func isPathValid(path string) bool {
 
 func walk(baseBranch string, targetRepo string, searchQuery string) error {
 	err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
-		if info.IsDir() && isPathValid(path) {
+		if isPathValid(info, path) {
 			// Skip subdirectories
 			if strings.Count(path, string(os.PathSeparator)) > 0 {
 				return filepath.SkipDir
