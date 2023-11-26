@@ -12,6 +12,7 @@ import (
 	"github.com/cli/go-gh/v2/pkg/repository"
 )
 
+// nolint:forbidigo
 func usage() {
 	fmt.Println("Usage: gh pr-count since (until)")
 	fmt.Println("example: gh pr-count 2023-10-01 // Search PRs merged since 2023-10-01 until now")
