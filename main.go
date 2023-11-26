@@ -6,6 +6,7 @@ import (
 	"log"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"os"
 
@@ -82,23 +83,35 @@ func printPRCount(baseBranch string, targetRepo string, path string, searchQuery
 }
 
 func walk(baseBranch string, targetRepo string, searchQuery string) error {
+	var wg sync.WaitGroup
+
 	err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
 		if isPathValid(info, path) {
 			// Skip subdirectories
 			if strings.Count(path, string(os.PathSeparator)) > 0 {
 				return filepath.SkipDir
 			}
+			wg.Add(1)
+			go func(wg *sync.WaitGroup) error {
+				defer wg.Done()
+				err := printPRCount(baseBranch, targetRepo, path, searchQuery)
+				if err != nil {
+					return fmt.Errorf("could not print PR count: %w", err)
+				}
 
-			err := printPRCount(baseBranch, targetRepo, path, searchQuery)
-			if err != nil {
-				return fmt.Errorf("could not get PR count: %w", err)
-			}
+				return nil
+			}(&wg)
+
 		}
 		return nil
 	})
+
 	if err != nil {
 		return fmt.Errorf("could not walk: %w", err)
 	}
+
+	wg.Wait()
+
 	return nil
 }
 
