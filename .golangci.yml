@@ -10,7 +10,18 @@ linters:
     - unused
     # custom
     - gocyclo
+    - gochecknoglobals
+    - errorlint
+    - wrapcheck
+    - forbidigo
 
 linters-settings:
   gocyclo:
     min-complexity: 10
+
+  errorlint:
+    errorf: true
+
+  forbidigo:
+    forbid:
+      - log.Fatal
