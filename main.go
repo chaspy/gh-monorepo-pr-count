@@ -50,7 +50,8 @@ func main() {
 				return filepath.SkipDir
 			}
 			// TODO: handle with json format
-			prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery)
+			prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery, "--label", "100")
+
 			if err != nil {
 				log.Fatal(err)
 			}
