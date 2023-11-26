@@ -11,7 +11,11 @@ linters:
     # custom
     - gocyclo
     - gochecknoglobals
+    - errorlint
 
 linters-settings:
   gocyclo:
     min-complexity: 10
+
+  errorlint:
+    errorf: true
