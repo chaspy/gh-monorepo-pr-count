@@ -5,7 +5,7 @@ gh extension to count the number of PRs with the same label as the directory nam
 ## Motivation
 
 Suppose you are a monorepo user and want to know the statistics of which services are actively developed.
-You assume that each Pull Request _has a label with the name of the directory_ that contains the files changed by the Pull Request.
+You assume that each Pull Request _has a label with the name of the directory_ that contains the files changed by the Pull Request. ([actions/labeler](https://github.com/actions/labeler) can help you to add the label automatically.)
 
 In that case, this gh-extension displays the number of labels that match the directory (service name).
 
