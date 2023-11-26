@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/fs"
 	"log"
 	"path/filepath"
 	"strings"
@@ -37,43 +38,42 @@ func makeMergedQuery(args []string) string {
 	return mergedQuery
 }
 
-func run() error {
-	checkArgs(os.Args)
-
-	mergedQuery := makeMergedQuery(os.Args)
-
-	// Add $SEARCH_QUERY from environment variable
-	additionalSearchQuery := os.Getenv("SEARCH_QUERY")
-	searchQuery := mergedQuery + " " + additionalSearchQuery
-
-	// Get the current repository
-	repo, err := repository.Current()
-	if err != nil {
-		return fmt.Errorf("could not determine current repository: %w", err)
-	}
-
-	targetRepo := repo.Owner + "/" + repo.Name
-	// To overwrite the target repository, use the GH_REPO environment variable
-
-	// Get default branch
-	defaultBranch, _, err := gh.Exec("repo", "view", targetRepo, "--json", "defaultBranchRef", "-q", ".defaultBranchRef.name", "-t", "{{.}}")
-	if err != nil {
-		return fmt.Errorf("could not get default branch: %w", err)
-	}
-	// gh query doesn't work with \n
-	baseBranch := strings.ReplaceAll(defaultBranch.String(), "\n", "")
-
-	// Count a number of PR for each directory
-	err = filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
+func getTargetRepo() (string, error) {
+	targetRepo := os.Getenv("GH_REPO")
+	if targetRepo == "" {
+		// Get the current repository
+		repo, err := repository.Current()
 		if err != nil {
-			return fmt.Errorf("could not walk: %w", err)
+			return "", fmt.Errorf("could not determine current repository: %w", err)
 		}
-		if info.IsDir() && path != "." && !strings.HasPrefix(path, ".") {
+		targetRepo = repo.Owner + "/" + repo.Name
+	}
+	return targetRepo, nil
+}
+
+func isPathValid(info fs.FileInfo, path string) bool {
+	if !info.IsDir() {
+		return false
+	}
+	if path == "." {
+		return false
+	}
+	if strings.HasPrefix(path, ".") {
+		return false
+	}
+	return true
+}
+
+func walk(baseBranch string, targetRepo string, searchQuery string) error {
+	err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
+		if isPathValid(info, path) {
 			// Skip subdirectories
 			if strings.Count(path, string(os.PathSeparator)) > 0 {
 				return filepath.SkipDir
 			}
 			// TODO: handle with json format
+			// NOTE: If GH_REPO env is set, then it is used as targetRepo in preference to the current repository
+			// ref: https://cli.github.com/manual/gh_help_environment
 			prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery, "--limit", "100")
 
 			if err != nil {
@@ -86,6 +86,36 @@ func run() error {
 		}
 		return nil
 	})
+	if err != nil {
+		return fmt.Errorf("could not walk: %w", err)
+	}
+	return nil
+}
+
+func run() error {
+	checkArgs(os.Args)
+
+	mergedQuery := makeMergedQuery(os.Args)
+
+	// Add $SEARCH_QUERY from environment variable
+	additionalSearchQuery := os.Getenv("SEARCH_QUERY")
+	searchQuery := mergedQuery + " " + additionalSearchQuery
+
+	targetRepo, err := getTargetRepo()
+	if err != nil {
+		return fmt.Errorf("could not get target repository: %w", err)
+	}
+
+	// Get default branch
+	defaultBranch, _, err := gh.Exec("repo", "view", targetRepo, "--json", "defaultBranchRef", "-q", ".defaultBranchRef.name", "-t", "{{.}}")
+	if err != nil {
+		return fmt.Errorf("could not get default branch: %w", err)
+	}
+	// gh query doesn't work with \n
+	baseBranch := strings.ReplaceAll(defaultBranch.String(), "\n", "")
+
+	// Count a number of PR for each directory
+	err = walk(baseBranch, targetRepo, searchQuery)
 	if err != nil {
 		return fmt.Errorf("could not walk: %w", err)
 	}
