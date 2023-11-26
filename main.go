@@ -13,8 +13,10 @@ import (
 )
 
 func main() {
-	if len(os.Args) != 2 {
-		fmt.Println("Usage: gh pr-count YYYY-MM-DD")
+	if len(os.Args) > 3 || len(os.Args) < 2 {
+		fmt.Println("Usage: gh pr-count since (until)")
+		fmt.Println("example: gh pr-count 2023-10-01 // Search PRs merged since 2023-10-01 until now")
+		fmt.Println("example: gh pr-count 2023-10-01 2023-11-01 // Search PRs merged since 2023-10-01 until 2023-11-01")
 		return
 	}
 	// Get 1st argument as "since date"
