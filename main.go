@@ -12,10 +12,13 @@ func main() {
 	repo, err := repository.Current()
 	fmt.Printf("Current repository: %s/%s\n", repo.Owner, repo.Name)
 
+	targetRepo := repo.Owner + "/" + repo.Name
+	fmt.Printf("Target repository: %s\n", targetRepo)
+
 	// Count a number of PRs
 	fmt.Println("counting a number of PRs...")
 
-	prList, _, err := gh.Exec("pr", "list", "--repo", "cli/cli", "--limit", "5")
+	prList, _, err := gh.Exec("pr", "list", "--repo", targetRepo, "--limit", "5")
 	if err != nil {
 		log.Fatal(err)
 	}
