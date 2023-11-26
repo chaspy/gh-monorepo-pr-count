@@ -59,10 +59,13 @@ func main() {
 	for _, repo := range repos {
 
 		fmt.Println("checking " + repo + "...")
+		// TODO: handle with json format
 		prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", repo, "--search", searchQuery)
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(prList.String())
+
+		result := strings.Split(prList.String(), "\n")
+		fmt.Println(len(result) - 1)
 	}
 }
