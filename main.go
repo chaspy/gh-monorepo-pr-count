@@ -20,7 +20,8 @@ func main() {
 	// Get 1st argument as "since date"
 	since := os.Args[1] // YYYY-MM-DD
 
-	searchQuery := "merged:>=" + since
+	// Ignore renovate PR (has label "dependencies")
+	searchQuery := "merged:>=" + since + " -label:dependencies"
 
 	// Get the current repository
 	repo, err := repository.Current()
