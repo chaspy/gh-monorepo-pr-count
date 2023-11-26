@@ -2,9 +2,9 @@ linters:
   disable-all: true
   enable:
     # defailt
-    - asasalint
-    - asciicheck
-    - bidichk
-    - bodyclose
-    - containedctx
-    - contextcheck
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
