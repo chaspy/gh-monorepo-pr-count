@@ -2,12 +2,20 @@ package main
 
 import (
 	"fmt"
-
+	"log"
+	gh "github.com/cli/go-gh/v2"
 	"github.com/cli/go-gh/v2/pkg/api"
 )
 
 func main() {
 	fmt.Println("counting a number of PRs...")
+
+	issueList, _, err := gh.Exec("pr", "list", "--repo", "cli/cli", "--limit", "5")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(issueList.String())
+
 	client, err := api.DefaultRESTClient()
 	if err != nil {
 		fmt.Println(err)
