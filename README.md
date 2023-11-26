@@ -22,10 +22,10 @@ gh pr-count YYYY-MM-DD
 
 ## Environment Variables
 
-| Name           | Description                                                                                             |
-| -------------- | ------------------------------------------------------------------------------------------------------- |
-| `GH_REPO`      | The repository to query. Defaults to the current repository.                                            |
-| `SEARCH_QUERY` | The search query to use. If you exclude a PR by bot, set `-author:app/dependabot author:app/dependabot` |
+| Name           | Description                                                                                                                            |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `GH_REPO`      | The repository to query. Defaults to the current repository.                                                                           |
+| `SEARCH_QUERY` | The search query to use. If you exclude a PR with `dependencies` label and by bot, set `"-label:dependencies -author:app/my-cool-bot"` |
 
 ## Known limitations
 
