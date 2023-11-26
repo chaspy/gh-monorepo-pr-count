@@ -12,22 +12,34 @@ import (
 	"github.com/cli/go-gh/v2/pkg/repository"
 )
 
-func main() {
-	if len(os.Args) > 3 || len(os.Args) < 2 {
-		fmt.Println("Usage: gh pr-count since (until)")
-		fmt.Println("example: gh pr-count 2023-10-01 // Search PRs merged since 2023-10-01 until now")
-		fmt.Println("example: gh pr-count 2023-10-01 2023-11-01 // Search PRs merged since 2023-10-01 until 2023-11-01")
-		return
-	}
+func usage() {
+	fmt.Println("Usage: gh pr-count since (until)")
+	fmt.Println("example: gh pr-count 2023-10-01 // Search PRs merged since 2023-10-01 until now")
+	fmt.Println("example: gh pr-count 2023-10-01 2023-11-01 // Search PRs merged since 2023-10-01 until 2023-11-01")
+}
 
+func checkArgs(args []string) {
+	if len(args) > 3 || len(args) < 2 {
+		usage()
+		os.Exit(1)
+	}
+}
+
+func makeMergedQuery(args []string) string {
 	var mergedQuery string
-	since := os.Args[1] // YYYY-MM-DD
 	if len(os.Args) == 2 {
 		// If 2nd argument is empty, set until date as today
-		mergedQuery = "merged:>=" + since
+		mergedQuery = "merged:>=" + os.Args[2]
 	} else {
-		mergedQuery = "merged:" + since + ".." + os.Args[2]
+		mergedQuery = "merged:" + os.Args[1] + ".." + os.Args[2]
 	}
+	return mergedQuery
+}
+
+func main() {
+	checkArgs(os.Args)
+
+	mergedQuery := makeMergedQuery(os.Args)
 
 	// Add $SEARCH_QUERY from environment variable
 	additionalSearchQuery := os.Getenv("SEARCH_QUERY")
