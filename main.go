@@ -36,14 +36,6 @@ func makeMergedQuery(args []string) string {
 	return mergedQuery
 }
 
-func main() {
-	err := run()
-	if err != nil {
-		//nolint:forbidigo
-		log.Fatal(err)
-	}
-}
-
 func run() error {
 	checkArgs(os.Args)
 
@@ -98,4 +90,11 @@ func run() error {
 	}
 
 	return nil
+}
+
+func main() {
+	err := run()
+	if err != nil {
+		log.Fatal(err) //nolint:forbidigo
+	}
 }
