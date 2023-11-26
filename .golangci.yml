@@ -1,0 +1,10 @@
+linters:
+  disable-all: true
+  enable:
+    # defailt
+    - asasalint
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - containedctx
+    - contextcheck
