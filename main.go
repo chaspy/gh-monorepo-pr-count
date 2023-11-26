@@ -19,12 +19,19 @@ func main() {
 		fmt.Println("example: gh pr-count 2023-10-01 2023-11-01 // Search PRs merged since 2023-10-01 until 2023-11-01")
 		return
 	}
-	// Get 1st argument as "since date"
+
+	var mergedQuery string
 	since := os.Args[1] // YYYY-MM-DD
+	if len(os.Args) == 2 {
+		// If 2nd argument is empty, set until date as today
+		mergedQuery = "merged:>=" + since
+	} else {
+		mergedQuery = "merged:" + since + ".." + os.Args[2]
+	}
 
 	// Add $SEARCH_QUERY from environment variable
 	additionalSearchQuery := os.Getenv("SEARCH_QUERY")
-	searchQuery := "merged:>=" + since + " " + additionalSearchQuery
+	searchQuery := mergedQuery + " " + additionalSearchQuery
 
 	// Get the current repository
 	repo, err := repository.Current()
