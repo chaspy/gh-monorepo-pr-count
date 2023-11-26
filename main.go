@@ -84,6 +84,7 @@ func printPRCount(baseBranch string, targetRepo string, path string, searchQuery
 
 func walk(baseBranch string, targetRepo string, searchQuery string) error {
 	var wg sync.WaitGroup
+	errCh := make(chan error, 1)
 
 	err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
 		if isPathValid(info, path) {
@@ -92,14 +93,12 @@ func walk(baseBranch string, targetRepo string, searchQuery string) error {
 				return filepath.SkipDir
 			}
 			wg.Add(1)
-			go func(wg *sync.WaitGroup) error {
+			go func(wg *sync.WaitGroup) {
 				defer wg.Done()
 				err := printPRCount(baseBranch, targetRepo, path, searchQuery)
 				if err != nil {
-					return fmt.Errorf("could not print PR count: %w", err)
+					errCh <- fmt.Errorf("could not print PR count: %w", err)
 				}
-
-				return nil
 			}(&wg)
 
 		}
@@ -110,7 +109,16 @@ func walk(baseBranch string, targetRepo string, searchQuery string) error {
 		return fmt.Errorf("could not walk: %w", err)
 	}
 
-	wg.Wait()
+	go func() {
+		wg.Wait()
+		close(errCh)
+	}()
+
+	for err := range errCh {
+		if err != nil {
+			return fmt.Errorf("could not print PR count: %w", err)
+		}
+	}
 
 	return nil
 }
