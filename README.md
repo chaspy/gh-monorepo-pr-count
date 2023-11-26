@@ -2,6 +2,18 @@
 
 gh extension to count the number of PRs with the same label as the directory name
 
+## Installation
+
+```sh
+gh extension install chaspy/gh-pr-count
+```
+
+To upgrade,
+
+```sh
+gh extension upgrade chaspy/gh-pr-count
+```
+
 ## Environment Variables
 
 | Name           | Description                                                  |
