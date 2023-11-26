@@ -64,6 +64,23 @@ func isPathValid(info fs.FileInfo, path string) bool {
 	return true
 }
 
+func printPRCount(baseBranch string, targetRepo string, path string, searchQuery string) error {
+	// TODO: handle with json format
+	// NOTE: If GH_REPO env is set, then it is used as targetRepo in preference to the current repository
+	// ref: https://cli.github.com/manual/gh_help_environment
+	prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery, "--limit", "100")
+
+	if err != nil {
+		return fmt.Errorf("could not get PR list: %w", err)
+	}
+
+	result := strings.Split(prList.String(), "\n")
+	num := len(result) - 1
+	fmt.Printf("%s,%d\n", path, num)
+
+	return nil
+}
+
 func walk(baseBranch string, targetRepo string, searchQuery string) error {
 	err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
 		if isPathValid(info, path) {
@@ -71,18 +88,11 @@ func walk(baseBranch string, targetRepo string, searchQuery string) error {
 			if strings.Count(path, string(os.PathSeparator)) > 0 {
 				return filepath.SkipDir
 			}
-			// TODO: handle with json format
-			// NOTE: If GH_REPO env is set, then it is used as targetRepo in preference to the current repository
-			// ref: https://cli.github.com/manual/gh_help_environment
-			prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery, "--limit", "100")
 
+			err := printPRCount(baseBranch, targetRepo, path, searchQuery)
 			if err != nil {
-				return fmt.Errorf("could not get PR list: %w", err)
+				return fmt.Errorf("could not get PR count: %w", err)
 			}
-
-			result := strings.Split(prList.String(), "\n")
-			num := len(result) - 1
-			fmt.Printf("%s,%d\n", path, num)
 		}
 		return nil
 	})
