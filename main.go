@@ -37,6 +37,14 @@ func makeMergedQuery(args []string) string {
 }
 
 func main() {
+	err := run()
+	if err != nil {
+		//nolint:forbidigo
+		log.Fatal(err)
+	}
+}
+
+func run() error {
 	checkArgs(os.Args)
 
 	mergedQuery := makeMergedQuery(os.Args)
@@ -48,7 +56,7 @@ func main() {
 	// Get the current repository
 	repo, err := repository.Current()
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("could not determine current repository: %w", err)
 	}
 
 	targetRepo := repo.Owner + "/" + repo.Name
@@ -57,7 +65,7 @@ func main() {
 	// Get default branch
 	defaultBranch, _, err := gh.Exec("repo", "view", targetRepo, "--json", "defaultBranchRef", "-q", ".defaultBranchRef.name", "-t", "{{.}}")
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("could not get default branch: %w", err)
 	}
 	// gh query doesn't work with \n
 	baseBranch := strings.ReplaceAll(defaultBranch.String(), "\n", "")
@@ -65,7 +73,7 @@ func main() {
 	// Count a number of PR for each directory
 	err = filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			return err
+			return fmt.Errorf("could not walk: %w", err)
 		}
 		if info.IsDir() && path != "." && !strings.HasPrefix(path, ".") {
 			// Skip subdirectories
@@ -76,7 +84,7 @@ func main() {
 			prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery, "--limit", "100")
 
 			if err != nil {
-				log.Fatal(err)
+				return fmt.Errorf("could not get PR list: %w", err)
 			}
 
 			result := strings.Split(prList.String(), "\n")
@@ -86,6 +94,8 @@ func main() {
 		return nil
 	})
 	if err != nil {
-		fmt.Println(err)
+		return fmt.Errorf("could not walk: %w", err)
 	}
+
+	return nil
 }
