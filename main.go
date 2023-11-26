@@ -12,6 +12,7 @@ import (
 	"github.com/cli/go-gh/v2/pkg/repository"
 )
 
+// nolint:forbidigo
 func usage() {
 	fmt.Println("Usage: gh pr-count since (until)")
 	fmt.Println("example: gh pr-count 2023-10-01 // Search PRs merged since 2023-10-01 until now")
@@ -34,14 +35,6 @@ func makeMergedQuery(args []string) string {
 		mergedQuery = "merged:" + args[1] + ".." + args[2]
 	}
 	return mergedQuery
-}
-
-func main() {
-	err := run()
-	if err != nil {
-		//nolint:forbidigo
-		log.Fatal(err)
-	}
 }
 
 func run() error {
@@ -98,4 +91,11 @@ func run() error {
 	}
 
 	return nil
+}
+
+func main() {
+	err := run()
+	if err != nil {
+		log.Fatal(err) //nolint:forbidigo
+	}
 }

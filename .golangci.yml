@@ -24,4 +24,5 @@ linters-settings:
 
   forbidigo:
     forbid:
+      - ^(fmt\\.Print(|f|ln)|print|println)$
       - log.Fatal
