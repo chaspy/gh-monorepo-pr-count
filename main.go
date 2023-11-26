@@ -41,9 +41,15 @@ func main() {
 	// Count a number of PRs
 	fmt.Println("counting a number of PRs...")
 
-	prList, _, err := gh.Exec("pr", "list", "--repo", targetRepo, "--limit", "5")
-	if err != nil {
-		log.Fatal(err)
+	// Test
+	repos := []string{"api,", "docs", "bin"}
+	for _, repo := range repos {
+		fmt.Println(repo)
+
+		prList, _, err := gh.Exec("pr", "list", "--repo", targetRepo, "--label", repo)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(prList.String())
 	}
-	fmt.Println(prList.String())
 }
