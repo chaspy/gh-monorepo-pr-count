@@ -1,8 +1,6 @@
 module github.com/chaspy/gh-pr-count
 
-go 1.21
-
-toolchain go1.21.4
+go 1.21.4
 
 require github.com/cli/go-gh/v2 v2.4.0
 
