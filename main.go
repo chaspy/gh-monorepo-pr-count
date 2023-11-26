@@ -45,13 +45,16 @@ func main() {
 	fmt.Println("counting a number of PRs...")
 
 	// Count a number of PR for each directory
-	// TODO: Walk only one level of directories
 	err = filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 		if info.IsDir() && path != "." && !filepath.HasPrefix(path, ".") {
 			fmt.Println("checking " + path + "...")
+			// Skip subdirectories
+			if strings.Count(path, string(os.PathSeparator)) > 0 {
+				return filepath.SkipDir
+			}
 			// TODO: handle with json format
 			prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery)
 			if err != nil {
