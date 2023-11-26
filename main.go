@@ -36,6 +36,7 @@ func main() {
 
 	targetRepo := repo.Owner + "/" + repo.Name
 	fmt.Printf("Target repository: %s\n", targetRepo)
+	// To overwrite the target repository, use the GH_REPO environment variable
 
 	// Count a number of PRs
 	fmt.Println("counting a number of PRs...")
