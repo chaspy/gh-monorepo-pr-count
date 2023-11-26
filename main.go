@@ -27,11 +27,11 @@ func checkArgs(args []string) {
 
 func makeMergedQuery(args []string) string {
 	var mergedQuery string
-	if len(os.Args) == 2 {
+	if len(args) == 2 {
 		// If 2nd argument is empty, set until date as today
-		mergedQuery = "merged:>=" + os.Args[2]
+		mergedQuery = "merged:>=" + args[1]
 	} else {
-		mergedQuery = "merged:" + os.Args[1] + ".." + os.Args[2]
+		mergedQuery = "merged:" + args[1] + ".." + args[2]
 	}
 	return mergedQuery
 }
