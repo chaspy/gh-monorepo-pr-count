@@ -55,7 +55,7 @@ func main() {
 		if err != nil {
 			return err
 		}
-		if info.IsDir() && path != "." && !filepath.HasPrefix(path, ".") {
+		if info.IsDir() && path != "." && !strings.HasPrefix(path, ".") {
 			// Skip subdirectories
 			if strings.Count(path, string(os.PathSeparator)) > 0 {
 				return filepath.SkipDir
