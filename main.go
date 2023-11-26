@@ -37,6 +37,19 @@ func makeMergedQuery(args []string) string {
 	return mergedQuery
 }
 
+func getTargetRepo() (string, error) {
+	targetRepo := os.Getenv("GH_REPO")
+	if targetRepo == "" {
+		// Get the current repository
+		repo, err := repository.Current()
+		if err != nil {
+			return "", fmt.Errorf("could not determine current repository: %w", err)
+		}
+		targetRepo = repo.Owner + "/" + repo.Name
+	}
+	return targetRepo, nil
+}
+
 func run() error {
 	checkArgs(os.Args)
 
@@ -46,14 +59,10 @@ func run() error {
 	additionalSearchQuery := os.Getenv("SEARCH_QUERY")
 	searchQuery := mergedQuery + " " + additionalSearchQuery
 
-	// Get the current repository
-	repo, err := repository.Current()
+	targetRepo, err := getTargetRepo()
 	if err != nil {
-		return fmt.Errorf("could not determine current repository: %w", err)
+		return fmt.Errorf("could not get target repository: %w", err)
 	}
-
-	targetRepo := repo.Owner + "/" + repo.Name
-	// To overwrite the target repository, use the GH_REPO environment variable
 
 	// Get default branch
 	defaultBranch, _, err := gh.Exec("repo", "view", targetRepo, "--json", "defaultBranchRef", "-q", ".defaultBranchRef.name", "-t", "{{.}}")
@@ -74,6 +83,8 @@ func run() error {
 				return filepath.SkipDir
 			}
 			// TODO: handle with json format
+			// NOTE: If GH_REPO env is set, then it is used as targetRepo in preference to the current repository
+			// ref: https://cli.github.com/manual/gh_help_environment
 			prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery, "--limit", "100")
 
 			if err != nil {
