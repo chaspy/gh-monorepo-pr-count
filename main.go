@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"log"
+	"path/filepath"
 	"strings"
 
 	"os"
-	"path/filepath"
 
 	gh "github.com/cli/go-gh/v2"
 	"github.com/cli/go-gh/v2/pkg/repository"
@@ -17,20 +17,6 @@ func main() {
 	since := os.Args[1] // YYYY-MM-DD
 
 	searchQuery := "merged:>=" + since
-
-	// Get directory name under the current directory
-	err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if info.IsDir() && path != "." && !filepath.HasPrefix(path, ".") {
-			fmt.Println(path)
-		}
-		return nil
-	})
-	if err != nil {
-		fmt.Println(err)
-	}
 
 	// Get the current repository
 	repo, err := repository.Current()
@@ -54,18 +40,26 @@ func main() {
 	// Count a number of PRs
 	fmt.Println("counting a number of PRs...")
 
-	// Test
-	repos := []string{"api", "docs", "bin"}
-	for _, repo := range repos {
-
-		fmt.Println("checking " + repo + "...")
-		// TODO: handle with json format
-		prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", repo, "--search", searchQuery)
+	// Count a number of PR for each directory
+	err = filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
+		if info.IsDir() && path != "." && !filepath.HasPrefix(path, ".") {
+			fmt.Println("checking " + path + "...")
+			// TODO: handle with json format
+			prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery)
+			if err != nil {
+				log.Fatal(err)
+			}
 
-		result := strings.Split(prList.String(), "\n")
-		fmt.Println(len(result) - 1)
+			result := strings.Split(prList.String(), "\n")
+			num := len(result) - 1
+			fmt.Printf("%s,%d\n", path, num)
+		}
+		return nil
+	})
+	if err != nil {
+		fmt.Println(err)
 	}
 }
