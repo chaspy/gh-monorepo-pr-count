@@ -17,7 +17,8 @@ gh extension upgrade chaspy/gh-pr-count
 ## Usage
 
 ```sh
-gh pr-count YYYY-MM-DD
+gh pr-count 2023-10-01 2023-10-31 # Count the number of PRs in October 2023
+gh pr-count 2023-11-01            # Count the number of PRs since November 1st, 2023 until now
 ```
 
 ## Environment Variables
