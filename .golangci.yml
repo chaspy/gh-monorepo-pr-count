@@ -12,6 +12,7 @@ linters:
     - gocyclo
     - gochecknoglobals
     - errorlint
+    - wrapcheck
 
 linters-settings:
   gocyclo:
