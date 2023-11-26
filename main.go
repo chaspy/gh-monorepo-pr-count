@@ -102,11 +102,15 @@ func walk(baseBranch string, targetRepo string, searchQuery string) error {
 				return filepath.SkipDir
 			}
 
-			sem <- struct{}{}
+			sem <- struct{}{} // Acquire semaphore
 
 			wg.Add(1)
 			go func(wg *sync.WaitGroup) {
-				defer wg.Done()
+				defer func() {
+					<-sem // Release semaphore
+					wg.Done()
+				}()
+
 				err := printPRCount(baseBranch, targetRepo, path, searchQuery)
 				if err != nil {
 					errCh <- fmt.Errorf("could not print PR count: %w", err)
