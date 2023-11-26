@@ -27,10 +27,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Current repository: %s/%s\n", repo.Owner, repo.Name)
 
 	targetRepo := repo.Owner + "/" + repo.Name
-	fmt.Printf("Target repository: %s\n", targetRepo)
 	// To overwrite the target repository, use the GH_REPO environment variable
 
 	// Get default branch
@@ -41,16 +39,12 @@ func main() {
 	// gh query doesn't work with \n
 	baseBranch := strings.ReplaceAll(defaultBranch.String(), "\n", "")
 
-	// Count a number of PRs
-	fmt.Println("counting a number of PRs...")
-
 	// Count a number of PR for each directory
 	err = filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 		if info.IsDir() && path != "." && !filepath.HasPrefix(path, ".") {
-			fmt.Println("checking " + path + "...")
 			// Skip subdirectories
 			if strings.Count(path, string(os.PathSeparator)) > 0 {
 				return filepath.SkipDir
