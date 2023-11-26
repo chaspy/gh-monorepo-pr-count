@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	fmt.Println("hi world, this is the gh-pr-count extension!")
+	fmt.Println("counting a number of PRs...")
 	client, err := api.DefaultRESTClient()
 	if err != nil {
 		fmt.Println(err)
