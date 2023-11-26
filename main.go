@@ -13,6 +13,10 @@ import (
 )
 
 func main() {
+	if len(os.Args) != 2 {
+		fmt.Println("Usage: gh pr-count YYYY-MM-DD")
+		return
+	}
 	// Get 1st argument as "since date"
 	since := os.Args[1] // YYYY-MM-DD
 
@@ -41,6 +45,7 @@ func main() {
 	fmt.Println("counting a number of PRs...")
 
 	// Count a number of PR for each directory
+	// TODO: Walk only one level of directories
 	err = filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
