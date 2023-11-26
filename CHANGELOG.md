@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.7](https://github.com/chaspy/gh-pr-count/compare/v0.0.6...v0.0.7) - 2023-11-26
+- Use PAT with checkout by @chaspy in https://github.com/chaspy/gh-pr-count/pull/12
+
 ## [v0.0.6](https://github.com/chaspy/gh-pr-count/compare/v0.0.5...v0.0.6) - 2023-11-26
 - Configure Renovate by @renovate in https://github.com/chaspy/gh-pr-count/pull/1
 - Add golang-ci-lint-action by @chaspy in https://github.com/chaspy/gh-pr-count/pull/3
