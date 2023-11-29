@@ -110,10 +110,10 @@ func walk(baseBranch string, targetRepo string, searchQuery string) error {
 	errCh := make(chan error, 1)
 
 	var maxConcurrentcy int
-	if os.Getenv("MAX_CONCURRENTCY") == "" {
+	if os.Getenv("MAX_CONCURRENCY") == "" {
 		maxConcurrentcy = 50
 	} else {
-		maxConcurrentcy, _ = strconv.Atoi(os.Getenv("MAX_CONCURRENTCY"))
+		maxConcurrentcy, _ = strconv.Atoi(os.Getenv("MAX_CONCURRENCY"))
 	}
 	sem := make(chan struct{}, maxConcurrentcy)
 

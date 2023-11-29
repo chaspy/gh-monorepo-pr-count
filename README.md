@@ -44,7 +44,7 @@ Please note that the order of the output is not guaranteed. You can sort the out
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
 | `GH_REPO`          | The repository to query. Defaults to the current repository.                                                                           |
 | `SEARCH_QUERY`     | The search query to use. If you exclude a PR with `dependencies` label and by bot, set `"-label:dependencies -author:app/my-cool-bot"` |
-| `MAX_CONCURRENTCY` | The maximum number of concurrentcy. Defaults to 50.                                                                                    |
+| `MAX_CONCURRENCY` | The maximum number of concurrentcy. Defaults to 50.                                                                                    |
 
 ## Known limitations
 
