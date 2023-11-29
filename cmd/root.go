@@ -56,16 +56,8 @@ func init() {
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
-// nolint:forbidigo
-func usage() {
-	fmt.Println("Usage: gh pr-count since (until)")
-	fmt.Println("example: gh pr-count 2023-10-01 // Search PRs merged since 2023-10-01 until now")
-	fmt.Println("example: gh pr-count 2023-10-01 2023-11-01 // Search PRs merged since 2023-10-01 until 2023-11-01")
-}
-
 func checkArgs(args []string) {
 	if len(args) > 3 || len(args) < 2 {
-		usage()
 		os.Exit(1)
 	}
 }
