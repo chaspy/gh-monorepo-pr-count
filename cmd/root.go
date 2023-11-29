@@ -18,6 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// nolint:gochecknoglobals
 var rootCmd = &cobra.Command{
 	Use:   "gh-pr-count",
 	Short: "gh extension to count the number of PRs with the same label as the directory name",
