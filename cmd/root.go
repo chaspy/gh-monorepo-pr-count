@@ -12,16 +12,15 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "gh-pr-count",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "gh extension to count the number of PRs with the same label as the directory name",
+	Long: `
+	gh extension to count the number of PRs with the same label as the directory name.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	For example:
+
+	gh pr-count 2023-10-01 2023-10-31 # Count the number of PRs in October 2023
+	gh pr-count 2023-11-01            # Count the number of PRs since November 1st, 2023 until now
+	`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
