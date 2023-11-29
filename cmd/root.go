@@ -4,6 +4,7 @@ Copyright © 2023 Takeshi Kondo
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -21,6 +22,10 @@ var rootCmd = &cobra.Command{
 	gh pr-count 2023-10-01 2023-10-31 # Count the number of PRs in October 2023
 	gh pr-count 2023-11-01            # Count the number of PRs since November 1st, 2023 until now
 	`,
+	Run: func(cmd *cobra.Command, args []string) {
+		// Say hello world
+		fmt.Println("Hello, world!")
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
