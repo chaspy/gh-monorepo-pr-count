@@ -18,7 +18,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "gh-pr-count",
 	Short: "gh extension to count the number of PRs with the same label as the directory name",
