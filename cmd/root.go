@@ -110,13 +110,13 @@ func walk(baseBranch string, targetRepo string, searchQuery string) error {
 	var wg sync.WaitGroup
 	errCh := make(chan error, 1)
 
-	var maxConcurrentcy int
+	var maxConcurrency int
 	if os.Getenv("MAX_CONCURRENCY") == "" {
-		maxConcurrentcy = 50
+		maxConcurrency = 50
 	} else {
-		maxConcurrentcy, _ = strconv.Atoi(os.Getenv("MAX_CONCURRENCY"))
+		maxConcurrency, _ = strconv.Atoi(os.Getenv("MAX_CONCURRENCY"))
 	}
-	sem := make(chan struct{}, maxConcurrentcy)
+	sem := make(chan struct{}, maxConcurrency)
 
 	err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
 		if isPathValid(info, path) {
