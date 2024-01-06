@@ -24,13 +24,12 @@ func usage() {
 	fmt.Println("example: gh monorepo-pr-count 2023-10-01 2023-11-01 // Search PRs merged since 2023-10-01 until 2023-11-01")
 }
 
-func makeMergedQuery(args []string) string {
+func makeMergedQuery(since string, until string) string {
 	var mergedQuery string
-	if len(args) == 2 {
-		// If 2nd argument is empty, set until date as today
-		mergedQuery = "merged:>=" + args[1]
+	if until != "" {
+		mergedQuery = "merged:" + since + ".." + until
 	} else {
-		mergedQuery = "merged:" + args[1] + ".." + args[2]
+		mergedQuery = "merged:>=" + since
 	}
 	return mergedQuery
 }
@@ -143,12 +142,13 @@ func run() error {
 	untilFlag := flag.String("until", today, "Optional: Search PRs merged until this date. Format: yyyy-mm-dd")
 	flag.Parse()
 
-	// debug
-	fmt.Println(*uaFlag)
-	fmt.Println(*sinceFlag)
-	fmt.Println(*untilFlag)
+	// sinceFlag is required
+	if *sinceFlag == "" {
+		usage()
+		os.Exit(1)
+	}
 
-	mergedQuery := makeMergedQuery(os.Args)
+	mergedQuery := makeMergedQuery(*sinceFlag, *untilFlag)
 
 	// Add $SEARCH_QUERY from environment variable
 	additionalSearchQuery := os.Getenv("SEARCH_QUERY")
