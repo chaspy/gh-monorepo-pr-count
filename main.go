@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/fs"
 	"log"
@@ -8,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"os"
 
@@ -17,13 +19,13 @@ import (
 
 // nolint:forbidigo
 func usage() {
-	fmt.Println("Usage: gh monorepo-pr-count since (until)")
+	fmt.Println("Usage: gh monorepo-pr-count (--uniq-author) since (until)")
 	fmt.Println("example: gh monorepo-pr-count 2023-10-01 // Search PRs merged since 2023-10-01 until now")
 	fmt.Println("example: gh monorepo-pr-count 2023-10-01 2023-11-01 // Search PRs merged since 2023-10-01 until 2023-11-01")
 }
 
 func checkArgs(args []string) {
-	if len(args) > 3 || len(args) < 2 {
+	if len(args) > 4 || len(args) < 2 {
 		usage()
 		os.Exit(1)
 	}
@@ -140,7 +142,18 @@ func walk(baseBranch string, targetRepo string, searchQuery string) error {
 }
 
 func run() error {
-	checkArgs(os.Args)
+	// Get current date as yyyy-mm-dd
+	today := time.Now().Format("2006-01-02")
+
+	uaFlag := flag.Bool("uniq-author", false, "Optional: Count a number of PR for each directory by uniq author")
+	sinceFlag := flag.String("since", "", "Required: Search PRs merged since this date. Format: yyyy-mm-dd")
+	untilFlag := flag.String("until", today, "Optional: Search PRs merged until this date. Format: yyyy-mm-dd")
+	flag.Parse()
+
+	// debug
+	fmt.Println(*uaFlag)
+	fmt.Println(*sinceFlag)
+	fmt.Println(*untilFlag)
 
 	mergedQuery := makeMergedQuery(os.Args)
 
@@ -171,6 +184,7 @@ func run() error {
 }
 
 func main() {
+
 	err := run()
 	if err != nil {
 		log.Fatal(err) //nolint:forbidigo
