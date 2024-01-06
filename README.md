@@ -18,13 +18,15 @@ Recommended.
 ```ruby
 labels = (git.added_files.to_a + git.deleted_files.to_a + git.modified_files.to_a).map {|f| Pathname.new(f).descend.first.to_s }.uniq
 
+repo = 'user/monorepo' # TODO: Update the repository name
+
 if labels.count > 0
   number = github.pr_json['number']
-  current_labels = github.api.labels_for_issue('user/monorepo', number).map(&:name)
+  current_labels = github.api.labels_for_issue(repo, number).map(&:name)
   missing_labels = labels - current_labels
   unless missing_labels.empty?
     begin
-      github.api.add_labels_to_an_issue('user/monorepo', number, missing_labels)
+      github.api.add_labels_to_an_issue(repo, number, missing_labels)
     rescue Octokit::Error => e
       message <<~MESSAGE
         Failed to add a label to the PR #{number}
