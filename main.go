@@ -24,13 +24,6 @@ func usage() {
 	fmt.Println("example: gh monorepo-pr-count 2023-10-01 2023-11-01 // Search PRs merged since 2023-10-01 until 2023-11-01")
 }
 
-func checkArgs(args []string) {
-	if len(args) > 4 || len(args) < 2 {
-		usage()
-		os.Exit(1)
-	}
-}
-
 func makeMergedQuery(args []string) string {
 	var mergedQuery string
 	if len(args) == 2 {
