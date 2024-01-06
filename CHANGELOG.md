@@ -1,5 +1,12 @@
 # Changelog
 
+## [v0.0.9](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.0.8...v0.0.9) - 2024-01-06
+- Update readme by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/16
+- labeler is useful by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/18
+- Update actions/setup-go action to v5 by @renovate in https://github.com/chaspy/gh-monorepo-pr-count/pull/21
+- Auto merge setting by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/22
+- Rename tool name by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/23
+
 ## [v0.0.8](https://github.com/chaspy/gh-pr-count/compare/v0.0.7...v0.0.8) - 2023-11-26
 - Parallel by @chaspy in https://github.com/chaspy/gh-pr-count/pull/14
 
