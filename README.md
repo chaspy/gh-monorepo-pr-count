@@ -1,31 +1,70 @@
-# gh-pr-count
+# gh-monorepo-pr-count
 
-gh extension to count the number of PRs with the same label as the directory name
+gh extension to count the number of PRs with the same label as the directory name for monorepo
 
 ## Motivation
 
 Suppose you are a monorepo user and want to know the statistics of which services are actively developed.
-You assume that each Pull Request _has a label with the name of the directory_ that contains the files changed by the Pull Request. ([actions/labeler](https://github.com/actions/labeler) can help you to add the label automatically.)
+You assume that each Pull Request _has a label with the name of the directory_ that contains the files changed by the Pull Request.
 
-In that case, this gh-extension displays the number of labels that match the directory (service name).
+`gh-monorepo-pr-count` will count a number of PR by label for each directory in your monorepo.
+
+### How to add a label to a PR
+
+#### [Danger](https://github.com/danger/danger)
+
+Recommended.
+
+```ruby
+labels = (git.added_files.to_a + git.deleted_files.to_a + git.modified_files.to_a).map {|f| Pathname.new(f).descend.first.to_s }.uniq
+
+if labels.count > 0
+  number = github.pr_json['number']
+  current_labels = github.api.labels_for_issue('user/monorepo', number).map(&:name)
+  missing_labels = labels - current_labels
+  unless missing_labels.empty?
+    begin
+      github.api.add_labels_to_an_issue('user/monorepo', number, missing_labels)
+    rescue Octokit::Error => e
+      message <<~MESSAGE
+        Failed to add a label to the PR #{number}
+        #{e.class}: #{e.message}
+      MESSAGE
+    end
+  end
+end
+```
+
+#### [actions/labeler](https://github.com/actions/labeler)
+
+You should update your `.github/labeler.yml` each time a new directory is added
+
+```yaml
+docs:
+  - changed-files:
+      - any-glob-to-any-file: docs/**
+backend:
+  - changed-files:
+      - any-glob-to-any-file: backend/**
+```
 
 ## Installation
 
 ```sh
-gh extension install chaspy/gh-pr-count
+gh extension install chaspy/gh-monorepo-pr-count
 ```
 
 To upgrade,
 
 ```sh
-gh extension upgrade chaspy/gh-pr-count
+gh extension upgrade chaspy/gh-monorepo-pr-count
 ```
 
 ## Usage
 
 ```sh
-gh pr-count 2023-10-01 2023-10-31 # Count the number of PRs in October 2023
-gh pr-count 2023-11-01            # Count the number of PRs since November 1st, 2023 until now
+gh monorepo-pr-count 2023-10-01 2023-10-31 # Count the number of PRs in October 2023
+gh monorepo-pr-count 2023-11-01            # Count the number of PRs since November 1st, 2023 until now
 ```
 
 Output example:
