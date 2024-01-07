@@ -137,7 +137,7 @@ func run() error {
 	// Get current date as yyyy-mm-dd
 	today := time.Now().Format("2006-01-02")
 
-	uaFlag := flag.Bool("uniq-author", false, "Optional: Count a number of PR for each directory by uniq author")
+	// uaFlag := flag.Bool("uniq-author", false, "Optional: Count a number of PR for each directory by uniq author")
 	// TODO: 取得した PR から author を取得するところで使う
 
 	sinceFlag := flag.String("since", "", "Required: Search PRs merged since this date. Format: yyyy-mm-dd")
