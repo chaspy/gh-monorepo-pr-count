@@ -1,13 +1,16 @@
 # Changelog
 
-## [v0.2.1](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.2.0...v0.2.1) - 2024-01-07
+## [v0.3.0](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.2.0...v0.2.1) - 2024-01-07
+
 - Support debug url flag by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/26
 
-## [v0.1.1](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.1.0...v0.1.1) - 2024-01-07
+## [v0.2.0](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.1.0...v0.1.1) - 2024-01-07
+
 - Support uniq author by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/24
 - Update dependency go to v1.21.5 by @renovate in https://github.com/chaspy/gh-monorepo-pr-count/pull/20
 
-## [v0.0.9](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.0.8...v0.0.9) - 2024-01-06
+## [v0.1.0](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.0.8...v0.0.9) - 2024-01-06
+
 - Update readme by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/16
 - labeler is useful by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/18
 - Update actions/setup-go action to v5 by @renovate in https://github.com/chaspy/gh-monorepo-pr-count/pull/21
@@ -15,12 +18,15 @@
 - Rename tool name by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/23
 
 ## [v0.0.8](https://github.com/chaspy/gh-pr-count/compare/v0.0.7...v0.0.8) - 2023-11-26
+
 - Parallel by @chaspy in https://github.com/chaspy/gh-pr-count/pull/14
 
 ## [v0.0.7](https://github.com/chaspy/gh-pr-count/compare/v0.0.6...v0.0.7) - 2023-11-26
+
 - Use PAT with checkout by @chaspy in https://github.com/chaspy/gh-pr-count/pull/12
 
 ## [v0.0.6](https://github.com/chaspy/gh-pr-count/compare/v0.0.5...v0.0.6) - 2023-11-26
+
 - Configure Renovate by @renovate in https://github.com/chaspy/gh-pr-count/pull/1
 - Add golang-ci-lint-action by @chaspy in https://github.com/chaspy/gh-pr-count/pull/3
 - Enable gocyclo by @chaspy in https://github.com/chaspy/gh-pr-count/pull/4
