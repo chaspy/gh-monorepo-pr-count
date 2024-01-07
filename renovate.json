@@ -26,9 +26,9 @@
     },
     {
       "customType": "regex",
-      "groupName": "go",
       "fileMatch": ["^.github/workflows/*.yml$"],
       "matchStrings": ["\\sgo-version: (?<currentValue>.*?)\n"],
+      "depNameTemplate": "go",
       "datasourceTemplate": "go"
     }
   ]
