@@ -66,12 +66,14 @@ gh extension upgrade chaspy/gh-monorepo-pr-count
 
 ```sh
 Usage of ./gh-monorepo-pr-count:
+  -debug-url
+    	Optional: Print debug url
   -since string
     	Required: Search PRs merged since this date. Format: yyyy-mm-dd
   -uniq-author
     	Optional: Count a number of PR for each directory by uniq author
   -until string
-    	Optional: Search PRs merged until this date. Format: yyyy-mm-dd (default "2024-01-06")
+    	Optional: Search PRs merged until this date. Format: yyyy-mm-dd (default is today)
 ```
 
 Output example:

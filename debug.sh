@@ -9,5 +9,6 @@ gh pr list \
   --label ${GH_LABEL} \
   --search "merged:>=${since} -label:dependencies -author:app/quipper-monorepo-ci" \
   --limit 100 \
-  --json author \
-  --template '{{range .}}{{tablerow .author.login }}{{end}}'
+  --web
+#  --json author \
+#  --template '{{range .}}{{tablerow .author.login }}{{end}}' \

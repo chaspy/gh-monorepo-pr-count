@@ -61,7 +61,7 @@ func isPathValid(info fs.FileInfo, path string) bool {
 	return true
 }
 
-func printPRCount(baseBranch string, targetRepo string, path string, searchQuery string, uaFlag bool) error {
+func printPRCount(baseBranch string, targetRepo string, path string, searchQuery string, uaFlag bool, debugFlag bool) error {
 	// TODO: handle with json format
 	// NOTE: If GH_REPO env is set, then it is used as targetRepo in preference to the current repository
 	// ref: https://cli.github.com/manual/gh_help_environment
@@ -86,10 +86,14 @@ func printPRCount(baseBranch string, targetRepo string, path string, searchQuery
 	num := len(result) - 1
 	fmt.Printf("%s,%d\n", path, num)
 
+	if debugFlag {
+		fmt.Printf("https://github.com/%s/pulls?q=%s base:%s label:%s\n", targetRepo, searchQuery, baseBranch, path)
+	}
+
 	return nil
 }
 
-func walk(baseBranch string, targetRepo string, searchQuery string, uaFlag bool) error {
+func walk(baseBranch string, targetRepo string, searchQuery string, uaFlag bool, debugFlag bool) error {
 	var wg sync.WaitGroup
 	errCh := make(chan error, 1)
 
@@ -117,7 +121,7 @@ func walk(baseBranch string, targetRepo string, searchQuery string, uaFlag bool)
 					wg.Done()
 				}()
 
-				err := printPRCount(baseBranch, targetRepo, path, searchQuery, uaFlag)
+				err := printPRCount(baseBranch, targetRepo, path, searchQuery, uaFlag, debugFlag)
 				if err != nil {
 					errCh <- fmt.Errorf("could not print PR count: %w", err)
 				}
@@ -150,6 +154,7 @@ func run() error {
 	today := time.Now().Format("2006-01-02")
 
 	uaFlag := flag.Bool("uniq-author", false, "Optional: Count a number of PR for each directory by uniq author")
+	debugFlag := flag.Bool("debug-url", false, "Optional: Print debug url")
 
 	sinceFlag := flag.String("since", "", "Required: Search PRs merged since this date. Format: yyyy-mm-dd")
 	untilFlag := flag.String("until", today, "Optional: Search PRs merged until this date. Format: yyyy-mm-dd")
@@ -181,7 +186,7 @@ func run() error {
 	baseBranch := strings.ReplaceAll(defaultBranch.String(), "\n", "")
 
 	// Count a number of PR for each directory
-	err = walk(baseBranch, targetRepo, searchQuery, *uaFlag)
+	err = walk(baseBranch, targetRepo, searchQuery, *uaFlag, *debugFlag)
 	if err != nil {
 		return fmt.Errorf("could not walk: %w", err)
 	}
