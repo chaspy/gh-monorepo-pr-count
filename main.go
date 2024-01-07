@@ -98,14 +98,19 @@ func walk(baseBranch string, targetRepo string, searchQuery string, uaFlag bool,
 	errCh := make(chan error, 1)
 
 	var maxConcurrentcy int
+	var err error
 	if os.Getenv("MAX_CONCURRENCY") == "" {
 		maxConcurrentcy = 50
 	} else {
-		maxConcurrentcy, _ = strconv.Atoi(os.Getenv("MAX_CONCURRENCY"))
+		maxConcurrentcy, err = strconv.Atoi(os.Getenv("MAX_CONCURRENCY"))
+		if err != nil {
+			return fmt.Errorf("could not convert MAX_CONCURRENCY to int: %w", err)
+		}
 	}
+
 	sem := make(chan struct{}, maxConcurrentcy)
 
-	err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
+	err = filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
 		if isPathValid(info, path) {
 			// Skip subdirectories
 			if strings.Count(path, string(os.PathSeparator)) > 0 {
