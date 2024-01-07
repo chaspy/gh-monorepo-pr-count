@@ -19,14 +19,14 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["^.github/workflows/test.yml$"],
+      "fileMatch": ["^\\.github/workflows/test\\.yml$"],
       "matchStrings": ["\\sversion: (?<currentValue>.*?)\n"],
       "depNameTemplate": "github.com/golangci/golangci-lint",
       "datasourceTemplate": "go"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^.github/workflows/*.yml$"],
+      "fileMatch": ["^\\.github/workflows/.*\\.yml$"],
       "matchStrings": ["\\sgo-version: (?<currentValue>.*?)\n"],
       "depNameTemplate": "go",
       "datasourceTemplate": "go"
