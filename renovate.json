@@ -1,24 +1,35 @@
 {
-  "extends": [
-    "config:base"
-  ],
+  "extends": ["config:recommended"],
   "packageRules": [
     {
-      "managers": ["gomod"],
-      "packagePatterns": [".*"],
-      "updateTypes": ["major"],
-      "postUpdateOptions": [
-        "gomodTidy"
-      ]
+      "matchManagers": ["gomod"],
+      "matchPackagePatterns": [".*"],
+      "matchUpdateTypes": ["major"],
+      "postUpdateOptions": ["gomodTidy"]
     },
     {
-      "managers": ["gomod"],
-      "packagePatterns": [".*"],
-      "updateTypes": ["minor", "patch", "pin", "digest"],
+      "groupName": "go",
+      "matchManagers": ["gomod"],
+      "matchPackagePatterns": [".*"],
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true,
-      "postUpdateOptions": [
-        "gomodTidy"
-      ]
+      "postUpdateOptions": ["gomodTidy"]
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["^.github/workflows/test.yml$"],
+      "matchStrings": ["\\sversion: (?<currentValue>.*?)\n"],
+      "depNameTemplate": "github.com/golangci/golangci-lint",
+      "datasourceTemplate": "go"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^.github/workflows/*.yml$"],
+      "matchStrings": ["\\sgo-version: (?<currentValue>.*?)\n"],
+      "depNameTemplate": "go",
+      "datasourceTemplate": "go"
     }
   ]
 }
