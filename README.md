@@ -65,8 +65,13 @@ gh extension upgrade chaspy/gh-monorepo-pr-count
 ## Usage
 
 ```sh
-gh monorepo-pr-count 2023-10-01 2023-10-31 # Count the number of PRs in October 2023
-gh monorepo-pr-count 2023-11-01            # Count the number of PRs since November 1st, 2023 until now
+Usage of ./gh-monorepo-pr-count:
+  -since string
+    	Required: Search PRs merged since this date. Format: yyyy-mm-dd
+  -uniq-author
+    	Optional: Count a number of PR for each directory by uniq author
+  -until string
+    	Optional: Search PRs merged until this date. Format: yyyy-mm-dd (default "2024-01-06")
 ```
 
 Output example:
@@ -81,11 +86,11 @@ Please note that the order of the output is not guaranteed. You can sort the out
 
 ## Environment Variables
 
-| Name               | Description                                                                                                                            |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `GH_REPO`          | The repository to query. Defaults to the current repository.                                                                           |
-| `SEARCH_QUERY`     | The search query to use. If you exclude a PR with `dependencies` label and by bot, set `"-label:dependencies -author:app/my-cool-bot"` |
-| `MAX_CONCURRENTCY` | The maximum number of concurrentcy. Defaults to 50.                                                                                    |
+| Name              | Description                                                                                                                            |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `GH_REPO`         | The repository to query. Defaults to the current repository.                                                                           |
+| `SEARCH_QUERY`    | The search query to use. If you exclude a PR with `dependencies` label and by bot, set `"-label:dependencies -author:app/my-cool-bot"` |
+| `MAX_CONCURRENCY` | The maximum number of concurrentcy. Defaults to 50.                                                                                    |
 
 ## Known limitations
 

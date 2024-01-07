@@ -1,4 +1,4 @@
-module github.com/chaspy/gh-pr-count
+module github.com/chaspy/gh-monorepo-pr-count
 
 go 1.21.4
 

@@ -1,13 +1,16 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/fs"
 	"log"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"os"
 
@@ -17,25 +20,17 @@ import (
 
 // nolint:forbidigo
 func usage() {
-	fmt.Println("Usage: gh pr-count since (until)")
-	fmt.Println("example: gh pr-count 2023-10-01 // Search PRs merged since 2023-10-01 until now")
-	fmt.Println("example: gh pr-count 2023-10-01 2023-11-01 // Search PRs merged since 2023-10-01 until 2023-11-01")
+	fmt.Println("Usage: gh monorepo-pr-count (--uniq-author) since (until)")
+	fmt.Println("example: gh monorepo-pr-count 2023-10-01 // Search PRs merged since 2023-10-01 until now")
+	fmt.Println("example: gh monorepo-pr-count 2023-10-01 2023-11-01 // Search PRs merged since 2023-10-01 until 2023-11-01")
 }
 
-func checkArgs(args []string) {
-	if len(args) > 3 || len(args) < 2 {
-		usage()
-		os.Exit(1)
-	}
-}
-
-func makeMergedQuery(args []string) string {
+func makeMergedQuery(since string, until string) string {
 	var mergedQuery string
-	if len(args) == 2 {
-		// If 2nd argument is empty, set until date as today
-		mergedQuery = "merged:>=" + args[1]
+	if until != "" {
+		mergedQuery = "merged:" + since + ".." + until
 	} else {
-		mergedQuery = "merged:" + args[1] + ".." + args[2]
+		mergedQuery = "merged:>=" + since
 	}
 	return mergedQuery
 }
@@ -66,32 +61,43 @@ func isPathValid(info fs.FileInfo, path string) bool {
 	return true
 }
 
-func printPRCount(baseBranch string, targetRepo string, path string, searchQuery string) error {
+func printPRCount(baseBranch string, targetRepo string, path string, searchQuery string, uaFlag bool) error {
 	// TODO: handle with json format
 	// NOTE: If GH_REPO env is set, then it is used as targetRepo in preference to the current repository
 	// ref: https://cli.github.com/manual/gh_help_environment
-	prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery, "--limit", "100")
+
+	// This gh query only show author name of each PR, so we need to count uniq author by --uniq-author flag.
+	// However, even if the --uniq-author flag is not set, the number of PRs can be obtained by counting the number of lines.
+	prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery, "--limit", "100",
+		"--json", "author", "--template", "'{{range .}}{{tablerow .author.login }}{{end}}'")
 
 	if err != nil {
 		return fmt.Errorf("could not get PR list: %w", err)
 	}
 
 	result := strings.Split(prList.String(), "\n")
+
+	if uaFlag {
+		// count uniq author
+		slices.Sort(result)
+		result = slices.Compact(result)
+	}
+
 	num := len(result) - 1
 	fmt.Printf("%s,%d\n", path, num)
 
 	return nil
 }
 
-func walk(baseBranch string, targetRepo string, searchQuery string) error {
+func walk(baseBranch string, targetRepo string, searchQuery string, uaFlag bool) error {
 	var wg sync.WaitGroup
 	errCh := make(chan error, 1)
 
 	var maxConcurrentcy int
-	if os.Getenv("MAX_CONCURRENTCY") == "" {
+	if os.Getenv("MAX_CONCURRENCY") == "" {
 		maxConcurrentcy = 50
 	} else {
-		maxConcurrentcy, _ = strconv.Atoi(os.Getenv("MAX_CONCURRENTCY"))
+		maxConcurrentcy, _ = strconv.Atoi(os.Getenv("MAX_CONCURRENCY"))
 	}
 	sem := make(chan struct{}, maxConcurrentcy)
 
@@ -111,7 +117,7 @@ func walk(baseBranch string, targetRepo string, searchQuery string) error {
 					wg.Done()
 				}()
 
-				err := printPRCount(baseBranch, targetRepo, path, searchQuery)
+				err := printPRCount(baseBranch, targetRepo, path, searchQuery, uaFlag)
 				if err != nil {
 					errCh <- fmt.Errorf("could not print PR count: %w", err)
 				}
@@ -140,9 +146,22 @@ func walk(baseBranch string, targetRepo string, searchQuery string) error {
 }
 
 func run() error {
-	checkArgs(os.Args)
+	// Get current date as yyyy-mm-dd
+	today := time.Now().Format("2006-01-02")
 
-	mergedQuery := makeMergedQuery(os.Args)
+	uaFlag := flag.Bool("uniq-author", false, "Optional: Count a number of PR for each directory by uniq author")
+
+	sinceFlag := flag.String("since", "", "Required: Search PRs merged since this date. Format: yyyy-mm-dd")
+	untilFlag := flag.String("until", today, "Optional: Search PRs merged until this date. Format: yyyy-mm-dd")
+	flag.Parse()
+
+	// sinceFlag is required
+	if *sinceFlag == "" {
+		usage()
+		os.Exit(1)
+	}
+
+	mergedQuery := makeMergedQuery(*sinceFlag, *untilFlag)
 
 	// Add $SEARCH_QUERY from environment variable
 	additionalSearchQuery := os.Getenv("SEARCH_QUERY")
@@ -162,7 +181,7 @@ func run() error {
 	baseBranch := strings.ReplaceAll(defaultBranch.String(), "\n", "")
 
 	// Count a number of PR for each directory
-	err = walk(baseBranch, targetRepo, searchQuery)
+	err = walk(baseBranch, targetRepo, searchQuery, *uaFlag)
 	if err != nil {
 		return fmt.Errorf("could not walk: %w", err)
 	}
@@ -171,6 +190,7 @@ func run() error {
 }
 
 func main() {
+
 	err := run()
 	if err != nil {
 		log.Fatal(err) //nolint:forbidigo
