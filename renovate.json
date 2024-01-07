@@ -12,6 +12,7 @@
       ]
     },
     {
+      "groupName": "go",
       "managers": ["gomod"],
       "packagePatterns": [".*"],
       "updateTypes": ["minor", "patch", "pin", "digest"],
@@ -19,6 +20,20 @@
       "postUpdateOptions": [
         "gomodTidy"
       ]
+    }
+  ],
+  "regexManagers": [
+    {
+      "fileMatch": ["^.github/workflows/test.yml$"],
+      "matchStrings": ["\\sversion: (?<currentValue>.*?)\n"],
+      "depNameTemplate": "github.com/golangci/golangci-lint",
+      "datasourceTemplate": "go"
+    },
+    {
+      "groupName": "go",
+      "fileMatch": ["^.github/workflows/*.yml$"],
+      "matchStrings": ["\\sgo-version: (?<currentValue>.*?)\n"],
+      "datasourceTemplate": "go"
     }
   ]
 }
