@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"io/fs"
@@ -94,8 +95,6 @@ func printPRCount(baseBranch string, targetRepo string, path string, searchQuery
 }
 
 func walk(baseBranch string, targetRepo string, searchQuery string, uaFlag bool, debugFlag bool) error {
-	var wg sync.WaitGroup
-	errCh := make(chan error, 1)
 
 	var maxConcurrentcy int
 	var err error
@@ -108,7 +107,19 @@ func walk(baseBranch string, targetRepo string, searchQuery string, uaFlag bool,
 		}
 	}
 
+	var wg sync.WaitGroup
+	errCh := make(chan error, 1)
 	sem := make(chan struct{}, maxConcurrentcy)
+	ctx, cancel := context.WithCancel(context.Background())
+
+	go func() {
+		for err := range errCh {
+			if err != nil {
+				cancel()
+				break
+			}
+		}
+	}()
 
 	err = filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
 		if isPathValid(info, path) {
@@ -117,7 +128,11 @@ func walk(baseBranch string, targetRepo string, searchQuery string, uaFlag bool,
 				return filepath.SkipDir
 			}
 
-			sem <- struct{}{} // Acquire semaphore
+			select {
+			case <-ctx.Done():
+				return nil
+			case sem <- struct{}{}: // Acquire semaphore
+			}
 
 			wg.Add(1)
 			go func(wg *sync.WaitGroup) {
@@ -140,16 +155,8 @@ func walk(baseBranch string, targetRepo string, searchQuery string, uaFlag bool,
 		return fmt.Errorf("could not walk: %w", err)
 	}
 
-	go func() {
-		wg.Wait()
-		close(errCh)
-	}()
-
-	for err := range errCh {
-		if err != nil {
-			return fmt.Errorf("could not print PR count: %w", err)
-		}
-	}
+	wg.Wait()
+	close(errCh)
 
 	return nil
 }
