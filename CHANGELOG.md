@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.3.1](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.3.0...v0.3.1) - 2024-01-07
+- Refactoring: Improve walk function by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/28
+- Update go and tool version in workflow files by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/30
+- Tweak renovate config by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/31
+- fix typo by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/32
+- Fix renovate datasource and tweak regex by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/33
+- Fix depNameTemplate and versioningTemplate by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/34
+- Update dependency golang-version to v1.21.5 by @renovate in https://github.com/chaspy/gh-monorepo-pr-count/pull/35
+
 ## [v0.3.0](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.2.0...v0.2.1) - 2024-01-07
 
 - Support debug url flag by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/26
