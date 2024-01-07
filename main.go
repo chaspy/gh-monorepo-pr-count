@@ -66,34 +66,25 @@ func printPRCount(baseBranch string, targetRepo string, path string, searchQuery
 	// NOTE: If GH_REPO env is set, then it is used as targetRepo in preference to the current repository
 	// ref: https://cli.github.com/manual/gh_help_environment
 
-	if uaFlag {
-		// get only author
-		prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery, "--limit", "100",
-			"--json", "author", "--template", "'{{range .}}{{tablerow .author.login }}{{end}}'")
+	// This gh query only show author name of each PR, so we need to count uniq author by --uniq-author flag.
+	// However, even if the --uniq-author flag is not set, the number of PRs can be obtained by counting the number of lines.
+	prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery, "--limit", "100",
+		"--json", "author", "--template", "'{{range .}}{{tablerow .author.login }}{{end}}'")
 
-		if err != nil {
-			return fmt.Errorf("could not get PR list: %w", err)
-		}
-
-		result := strings.Split(prList.String(), "\n")
-		slices.Sort(result)
-		uniqAuthors := slices.Compact(result)
-		num := len(uniqAuthors) - 1
-
-		fmt.Printf("%s,%d\n", path, num)
-
-	} else {
-		// just list and count PRs
-		prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery, "--limit", "100")
-
-		if err != nil {
-			return fmt.Errorf("could not get PR list: %w", err)
-		}
-
-		result := strings.Split(prList.String(), "\n")
-		num := len(result) - 1
-		fmt.Printf("%s,%d\n", path, num)
+	if err != nil {
+		return fmt.Errorf("could not get PR list: %w", err)
 	}
+
+	result := strings.Split(prList.String(), "\n")
+
+	if uaFlag {
+		// count uniq author
+		slices.Sort(result)
+		result = slices.Compact(result)
+	}
+
+	num := len(result) - 1
+	fmt.Printf("%s,%d\n", path, num)
 
 	return nil
 }
