@@ -94,17 +94,26 @@ func printPRCount(baseBranch string, targetRepo string, path string, searchQuery
 	return nil
 }
 
+func getMaxConcurrency() (int, error) {
+	var ret int
+	defaultMaxConcurrency := 50
+	if os.Getenv("MAX_CONCURRENCY") == "" {
+		ret = defaultMaxConcurrency
+	} else {
+		maxConcurrentcy, err := strconv.Atoi(os.Getenv("MAX_CONCURRENCY"))
+		if err != nil {
+			return 0, fmt.Errorf("could not convert MAX_CONCURRENCY to int: %w", err)
+		}
+		ret = maxConcurrentcy
+	}
+	return ret, nil
+}
+
 func walk(baseBranch string, targetRepo string, searchQuery string, uaFlag bool, debugFlag bool) error {
 
-	var maxConcurrentcy int
-	var err error
-	if os.Getenv("MAX_CONCURRENCY") == "" {
-		maxConcurrentcy = 50
-	} else {
-		maxConcurrentcy, err = strconv.Atoi(os.Getenv("MAX_CONCURRENCY"))
-		if err != nil {
-			return fmt.Errorf("could not convert MAX_CONCURRENCY to int: %w", err)
-		}
+	maxConcurrentcy, err := getMaxConcurrency()
+	if err != nil {
+		return fmt.Errorf("could not get MAX_CONCURRENCY: %w", err)
 	}
 
 	var wg sync.WaitGroup
