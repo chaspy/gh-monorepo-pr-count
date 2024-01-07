@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.1.1](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.1.0...v0.1.1) - 2024-01-07
+- Support uniq author by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/24
+- Update dependency go to v1.21.5 by @renovate in https://github.com/chaspy/gh-monorepo-pr-count/pull/20
+
 ## [v0.0.9](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.0.8...v0.0.9) - 2024-01-06
 - Update readme by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/16
 - labeler is useful by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/18
