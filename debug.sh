@@ -7,7 +7,7 @@ gh pr list \
   --base "${GH_BASE}" \
   --repo "${GH_REPO}" \
   --label ${GH_LABEL} \
-  --search "merged:>=${since} -label:dependencies" \
+  --search "merged:>=${since} -label:dependencies -author:app/quipper-monorepo-ci" \
   --limit 100 \
   --json author \
   --template '{{range .}}{{tablerow .author.login }}{{end}}'
