@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.2.1](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.2.0...v0.2.1) - 2024-01-07
+- Support debug url flag by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/26
+
 ## [v0.1.1](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.1.0...v0.1.1) - 2024-01-07
 - Support uniq author by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/24
 - Update dependency go to v1.21.5 by @renovate in https://github.com/chaspy/gh-monorepo-pr-count/pull/20
