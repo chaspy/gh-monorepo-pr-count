@@ -122,6 +122,10 @@ func walk(baseBranch string, targetRepo string, searchQuery string, uaFlag bool,
 	}()
 
 	err = filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return fmt.Errorf("problem during the walk: %w", err)
+		}
+
 		if isPathValid(info, path) {
 			// Skip subdirectories
 			if strings.Count(path, string(os.PathSeparator)) > 0 {
