@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"log"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -60,24 +61,44 @@ func isPathValid(info fs.FileInfo, path string) bool {
 	return true
 }
 
-func printPRCount(baseBranch string, targetRepo string, path string, searchQuery string) error {
+func printPRCount(baseBranch string, targetRepo string, path string, searchQuery string, uaFlag bool) error {
 	// TODO: handle with json format
 	// NOTE: If GH_REPO env is set, then it is used as targetRepo in preference to the current repository
 	// ref: https://cli.github.com/manual/gh_help_environment
-	prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery, "--limit", "100")
 
-	if err != nil {
-		return fmt.Errorf("could not get PR list: %w", err)
+	if uaFlag {
+		// get only author
+		prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery, "--limit", "100",
+			"--json", "author", "--template", "'{{range .}}{{tablerow .author.login }}{{end}}'")
+
+		if err != nil {
+			return fmt.Errorf("could not get PR list: %w", err)
+		}
+
+		result := strings.Split(prList.String(), "\n")
+		slices.Sort(result)
+		uniqAuthors := slices.Compact(result)
+		num := len(uniqAuthors) - 1
+
+		fmt.Printf("%s,%d\n", path, num)
+
+	} else {
+		// just list and count PRs
+		prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery, "--limit", "100")
+
+		if err != nil {
+			return fmt.Errorf("could not get PR list: %w", err)
+		}
+
+		result := strings.Split(prList.String(), "\n")
+		num := len(result) - 1
+		fmt.Printf("%s,%d\n", path, num)
 	}
-
-	result := strings.Split(prList.String(), "\n")
-	num := len(result) - 1
-	fmt.Printf("%s,%d\n", path, num)
 
 	return nil
 }
 
-func walk(baseBranch string, targetRepo string, searchQuery string) error {
+func walk(baseBranch string, targetRepo string, searchQuery string, uaFlag bool) error {
 	var wg sync.WaitGroup
 	errCh := make(chan error, 1)
 
@@ -105,7 +126,7 @@ func walk(baseBranch string, targetRepo string, searchQuery string) error {
 					wg.Done()
 				}()
 
-				err := printPRCount(baseBranch, targetRepo, path, searchQuery)
+				err := printPRCount(baseBranch, targetRepo, path, searchQuery, uaFlag)
 				if err != nil {
 					errCh <- fmt.Errorf("could not print PR count: %w", err)
 				}
@@ -137,8 +158,7 @@ func run() error {
 	// Get current date as yyyy-mm-dd
 	today := time.Now().Format("2006-01-02")
 
-	// uaFlag := flag.Bool("uniq-author", false, "Optional: Count a number of PR for each directory by uniq author")
-	// TODO: 取得した PR から author を取得するところで使う
+	uaFlag := flag.Bool("uniq-author", false, "Optional: Count a number of PR for each directory by uniq author")
 
 	sinceFlag := flag.String("since", "", "Required: Search PRs merged since this date. Format: yyyy-mm-dd")
 	untilFlag := flag.String("until", today, "Optional: Search PRs merged until this date. Format: yyyy-mm-dd")
@@ -170,7 +190,7 @@ func run() error {
 	baseBranch := strings.ReplaceAll(defaultBranch.String(), "\n", "")
 
 	// Count a number of PR for each directory
-	err = walk(baseBranch, targetRepo, searchQuery)
+	err = walk(baseBranch, targetRepo, searchQuery, *uaFlag)
 	if err != nil {
 		return fmt.Errorf("could not walk: %w", err)
 	}
