@@ -109,12 +109,7 @@ func getMaxConcurrency() (int, error) {
 	return ret, nil
 }
 
-func walk(baseBranch string, targetRepo string, searchQuery string, uaFlag bool, debugFlag bool) error {
-
-	maxConcurrentcy, err := getMaxConcurrency()
-	if err != nil {
-		return fmt.Errorf("could not get MAX_CONCURRENCY: %w", err)
-	}
+func walk(maxConcurrentcy int, baseBranch string, targetRepo string, searchQuery string, uaFlag bool, debugFlag bool) error {
 
 	var wg sync.WaitGroup
 	errCh := make(chan error, 1)
@@ -130,7 +125,7 @@ func walk(baseBranch string, targetRepo string, searchQuery string, uaFlag bool,
 		}
 	}()
 
-	err = filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return fmt.Errorf("problem during the walk: %w", err)
 		}
@@ -210,8 +205,13 @@ func run() error {
 	// gh query doesn't work with \n
 	baseBranch := strings.ReplaceAll(defaultBranch.String(), "\n", "")
 
+	maxConcurrentcy, err := getMaxConcurrency()
+	if err != nil {
+		return fmt.Errorf("could not get MAX_CONCURRENCY: %w", err)
+	}
+
 	// Count a number of PR for each directory
-	err = walk(baseBranch, targetRepo, searchQuery, *uaFlag, *debugFlag)
+	err = walk(maxConcurrentcy, baseBranch, targetRepo, searchQuery, *uaFlag, *debugFlag)
 	if err != nil {
 		return fmt.Errorf("could not walk: %w", err)
 	}
