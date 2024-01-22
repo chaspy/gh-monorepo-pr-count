@@ -16,14 +16,10 @@
       "postUpdateOptions": ["gomodTidy"]
     },
     {
-      "packageRules": [
-        {
-          "groupName": "go",
-          "matchPackageNames": ["golang-version"],
-          "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
-          "automerge": true
-        }
-      ]
+      "groupName": "go",
+      "matchPackageNames": ["golang-version"],
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
     }
   ],
   "customManagers": [
