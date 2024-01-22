@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.3.2](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.3.1...v0.3.2) - 2024-01-22
+- Update dependency go to v1.21.6 by @renovate in https://github.com/chaspy/gh-monorepo-pr-count/pull/36
+- Auto merge golang-version by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/39
+- Update dependency golang-version to v1.21.6 by @renovate in https://github.com/chaspy/gh-monorepo-pr-count/pull/40
+- ci: Add path filter for pull_request event by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/41
+
 ## [v0.3.1](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.3.0...v0.3.1) - 2024-01-07
 - Refactoring: Improve walk function by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/28
 - Update go and tool version in workflow files by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/30
