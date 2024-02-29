@@ -118,6 +118,7 @@ func getMaxConcurrency() (int, error) {
 	return ret, nil
 }
 
+// nolint:gocyclo
 func walk(maxConcurrentcy int, baseBranch string, targetRepo string, searchQuery string, uaFlag bool, debugFlag bool) error {
 
 	var wg sync.WaitGroup
