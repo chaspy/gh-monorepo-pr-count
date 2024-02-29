@@ -27,18 +27,21 @@ func usage() {
 }
 
 func makeStateQuery(state string, since string, until string) string {
-	var mergedQuery string
+	var stateQuery string
+	var queryState string
 
 	if state == "open" {
-		state = "created"
+		queryState = "created"
+	} else {
+		queryState = state
 	}
 
 	if until != "" {
-		mergedQuery = state + ":" + since + ".." + until
+		stateQuery = "is:" + state + " " + queryState + ":" + since + ".." + until
 	} else {
-		mergedQuery = state + ":>=" + since
+		stateQuery = "is:" + state + " " + queryState + ":>=" + since
 	}
-	return mergedQuery
+	return stateQuery
 }
 
 func getTargetRepo() (string, error) {
