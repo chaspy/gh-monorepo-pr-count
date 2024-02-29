@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.4.0](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.3.2...v0.4.0) - 2024-02-29
+- Support open/closed state to search PRs by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/45
+- fix(deps): update go by @renovate in https://github.com/chaspy/gh-monorepo-pr-count/pull/42
+
 ## [v0.3.2](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.3.1...v0.3.2) - 2024-01-22
 - Update dependency go to v1.21.6 by @renovate in https://github.com/chaspy/gh-monorepo-pr-count/pull/36
 - Auto merge golang-version by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/39
