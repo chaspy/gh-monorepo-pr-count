@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.4.2](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.4.1...v0.4.2) - 2024-02-29
+- 🐛 fix(main.go): fix error handling in the walk function to properly h… by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/51
+
 ## [v0.4.1](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.4.0...v0.4.1) - 2024-02-29
 - Revert "fix(deps): update go" by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/47
 
