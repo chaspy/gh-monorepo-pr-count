@@ -146,7 +146,7 @@ func walk(maxConcurrentcy int, baseBranch string, targetRepo string, searchQuery
 
 			select {
 			case <-ctx.Done():
-				return ctx.Err()
+				return fmt.Errorf("context is done: %w", ctx.Err())
 			case sem <- struct{}{}: // Acquire semaphore
 			}
 
