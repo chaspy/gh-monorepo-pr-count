@@ -77,6 +77,7 @@ func printPRCount(baseBranch string, targetRepo string, path string, searchQuery
 
 	// This gh query only show author name of each PR, so we need to count uniq author by --uniq-author flag.
 	// However, even if the --uniq-author flag is not set, the number of PRs can be obtained by counting the number of lines.
+
 	prList, _, err := gh.Exec("pr", "list", "--base", baseBranch, "--repo", targetRepo, "--label", path, "--search", searchQuery, "--limit", "100",
 		"--json", "author", "--template", "'{{range .}}{{tablerow .author.login }}{{end}}'")
 
@@ -128,7 +129,6 @@ func walk(maxConcurrentcy int, baseBranch string, targetRepo string, searchQuery
 		for err := range errCh {
 			if err != nil {
 				cancel()
-				break
 			}
 		}
 	}()
@@ -146,33 +146,40 @@ func walk(maxConcurrentcy int, baseBranch string, targetRepo string, searchQuery
 
 			select {
 			case <-ctx.Done():
-				return nil
+				return ctx.Err()
 			case sem <- struct{}{}: // Acquire semaphore
 			}
 
 			wg.Add(1)
-			go func(wg *sync.WaitGroup) {
-				defer func() {
-					<-sem // Release semaphore
-					wg.Done()
-				}()
+			go func(path string){
+				defer wg.Done()
+				defer func() { <-sem}()
 
-				err := printPRCount(baseBranch, targetRepo, path, searchQuery, uaFlag, debugFlag)
-				if err != nil {
-					errCh <- fmt.Errorf("could not print PR count: %w", err)
+				if err := printPRCount(baseBranch, targetRepo, path, searchQuery, uaFlag, debugFlag); err != nil {
+					select {
+					case errCh <- err:
+					case <-ctx.Done():
+					}
 				}
-			}(&wg)
-
+			}(path)
 		}
 		return nil
 	})
 
-	if err != nil {
-		return fmt.Errorf("could not walk: %w", err)
-	}
-
 	wg.Wait()
 	close(errCh)
+
+	if err != nil {
+		return fmt.Errorf("problem during the walk: %w", err)
+	}
+
+	select {
+		case err, ok := <-errCh:
+			if ok && err != nil {
+				return err
+			}
+		default:
+	}
 
 	return nil
 }
