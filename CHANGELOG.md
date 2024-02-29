@@ -1,6 +1,6 @@
 # Changelog
 
-## [v0.3.3](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.3.2...v0.3.3) - 2024-02-29
+## [v0.4.0](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.3.2...v0.4.0) - 2024-02-29
 - Support open/closed state to search PRs by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/45
 - fix(deps): update go by @renovate in https://github.com/chaspy/gh-monorepo-pr-count/pull/42
 
