@@ -26,14 +26,22 @@ func usage() {
 	fmt.Println("example: gh monorepo-pr-count 2023-10-01 2023-11-01 // Search PRs merged since 2023-10-01 until 2023-11-01")
 }
 
-func makeMergedQuery(since string, until string) string {
-	var mergedQuery string
-	if until != "" {
-		mergedQuery = "merged:" + since + ".." + until
+func makeStateQuery(state string, since string, until string) string {
+	var stateQuery string
+	var queryState string
+
+	if state == "open" {
+		queryState = "created"
 	} else {
-		mergedQuery = "merged:>=" + since
+		queryState = state
 	}
-	return mergedQuery
+
+	if until != "" {
+		stateQuery = "is:" + state + " " + queryState + ":" + since + ".." + until
+	} else {
+		stateQuery = "is:" + state + " " + queryState + ":>=" + since
+	}
+	return stateQuery
 }
 
 func getTargetRepo() (string, error) {
@@ -178,6 +186,9 @@ func run() error {
 
 	sinceFlag := flag.String("since", "", "Required: Search PRs merged since this date. Format: yyyy-mm-dd")
 	untilFlag := flag.String("until", today, "Optional: Search PRs merged until this date. Format: yyyy-mm-dd")
+
+	stateFlag := flag.String("state", "merged", "Optional: Search PRs with the specified state(open|closed|merged). Default: merged")
+
 	flag.Parse()
 
 	// sinceFlag is required
@@ -186,11 +197,11 @@ func run() error {
 		os.Exit(1)
 	}
 
-	mergedQuery := makeMergedQuery(*sinceFlag, *untilFlag)
+	stateQuery := makeStateQuery(*stateFlag, *sinceFlag, *untilFlag)
 
 	// Add $SEARCH_QUERY from environment variable
 	additionalSearchQuery := os.Getenv("SEARCH_QUERY")
-	searchQuery := mergedQuery + " " + additionalSearchQuery
+	searchQuery := stateQuery + " " + additionalSearchQuery
 
 	targetRepo, err := getTargetRepo()
 	if err != nil {
