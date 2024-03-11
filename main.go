@@ -21,9 +21,9 @@ import (
 
 // nolint:forbidigo
 func usage() {
-	fmt.Println("Usage: gh monorepo-pr-count (--uniq-author) since (until)")
-	fmt.Println("example: gh monorepo-pr-count 2023-10-01 // Search PRs merged since 2023-10-01 until now")
-	fmt.Println("example: gh monorepo-pr-count 2023-10-01 2023-11-01 // Search PRs merged since 2023-10-01 until 2023-11-01")
+	fmt.Println("Usage: gh monorepo-pr-count --since since (--until until) (--state state) (--debug-url) (--uniq-author) ")
+	fmt.Println("example: gh monorepo-pr-count --since 2023-10-01 // Search PRs merged since 2023-10-01 until now")
+	fmt.Println("example: gh monorepo-pr-count --since 2023-10-01 --until 2023-11-01 // Search PRs merged since 2023-10-01 until 2023-11-01")
 }
 
 func makeStateQuery(state string, since string, until string) string {
