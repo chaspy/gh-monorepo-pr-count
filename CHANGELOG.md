@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.4.4](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.4.3...v0.4.4) - 2024-03-11
+- Revert "Update go" by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/55
+
 ## [v0.4.3](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.4.2...v0.4.3) - 2024-03-11
 - Support .github dir by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/52
 - Update usage for help by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/54
