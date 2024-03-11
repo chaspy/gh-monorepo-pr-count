@@ -64,6 +64,10 @@ func isPathValid(info fs.FileInfo, path string) bool {
 	if path == "." {
 		return false
 	}
+	// .github is special directory, so we should include it.
+	if path == ".github" {
+		return true
+	}
 	if strings.HasPrefix(path, ".") {
 		return false
 	}
