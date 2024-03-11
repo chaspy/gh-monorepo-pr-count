@@ -1,5 +1,12 @@
 # Changelog
 
+## [v0.4.3](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.4.2...v0.4.3) - 2024-03-11
+- Support .github dir by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/52
+- Update usage for help by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/54
+- Update go by @renovate in https://github.com/chaspy/gh-monorepo-pr-count/pull/49
+- Update golangci/golangci-lint-action action to v4 by @renovate in https://github.com/chaspy/gh-monorepo-pr-count/pull/44
+- Update module github.com/golangci/golangci-lint to v1.56.2 by @renovate in https://github.com/chaspy/gh-monorepo-pr-count/pull/43
+
 ## [v0.4.2](https://github.com/chaspy/gh-monorepo-pr-count/compare/v0.4.1...v0.4.2) - 2024-02-29
 - 🐛 fix(main.go): fix error handling in the walk function to properly h… by @chaspy in https://github.com/chaspy/gh-monorepo-pr-count/pull/51
 
