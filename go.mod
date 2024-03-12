@@ -1,8 +1,8 @@
 module github.com/chaspy/gh-monorepo-pr-count
 
-go 1.21.6
+go 1.22.1
 
-require github.com/cli/go-gh/v2 v2.4.0
+require github.com/cli/go-gh/v2 v2.6.0
 
 require (
 	github.com/cli/safeexec v1.0.0 // indirect
